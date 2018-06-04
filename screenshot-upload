@@ -1,0 +1,26 @@
+#!/bin/bash
+
+API_KEY=""
+API_ENDPOINT=""
+FILE_PATH=$1
+
+if [ "$1" == "" ]; then
+    echo "Error: No file specified."
+    exit 1
+fi
+
+IMAGE_URL=$(curl \
+  -F "file=@$FILE_PATH" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $API_KEY" \
+  -sS \
+  $API_ENDPOINT | \
+  python -c "import sys, json; body = json.load(sys.stdin); print body['url'] if 'url' in body else ''")
+
+if [ "$IMAGE_URL" == "" ]; then
+    echo "Error: Bad response from server."
+    exit 1
+fi
+
+echo $IMAGE_URL
+exit 0
